@@ -1,0 +1,104 @@
+﻿namespace Task3 //ЗАДАЧА 27
+{
+
+    public class Task
+    {
+        public void Start() // === START ===
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("ЗАДАЧА 27: на входе число, на выходе сумма всех разрядов числа.");
+            Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("info: дробная часть вводится через точку");
+            Console.ResetColor();
+
+            decimal number = Input(); // ввод числа.
+
+            Console.WriteLine("");
+            Console.WriteLine($"Сумма всех разрядов числа [{number.ToString().Replace(",", ".")}]: " + NumberDigitSum(number)); //вуаля
+
+            Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("* для завершения задачи нажмите любую клавишу...");
+            Console.ResetColor();
+            Console.ReadKey(true);
+        } // === FINISH ===
+
+
+
+        // Функция ввода и проверки данных.
+        static decimal Input()
+        {
+            decimal rezult;
+            
+            Console.WriteLine("");
+            do
+            {
+                Console.ResetColor();
+                Console.Write("Введите число: ");
+                
+                string str = Console.ReadLine()!.Trim().Replace(",", "ввод дробной части красивый, когда через точку =) ").Replace(".", ","); // шаманю с точками, запятыми и боковыми пробелами
+
+                if (str.IndexOf(" ") > -1) // пресекается возможность предоставляемая decimal.Parse() скормить ввод пробелов внутрь числа (например "1 1" = "11").
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("err: некорректный ввод!");
+
+                    continue;
+                }
+
+                if (decimal.TryParse(str, out rezult) == false) // преобразование
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("err: не числовой тип!");
+
+                    continue;
+                }
+
+                break;
+            } while (true);
+
+            return rezult;
+        }
+
+        //Функция сложения всех разрядов числа
+        static int NumberDigitSum (decimal number)
+        {
+            int rezult = 0;
+
+            number = Math.Abs(number); // абсолютное значение
+
+            do // переброс дробной части в целую (на ноль, если он был единственной целой частью, пофиг)
+            {
+                number *= 10;
+            } while (number - Math.Truncate(number) != 0);
+
+            int numberInt = Decimal.ToInt32(number); // конвертирование в Integer, что бы дальше не париться над дробной частью
+
+            do // сложение разрядов
+            {
+                rezult += numberInt % 10; // плюсование последнего разряда
+                numberInt /= 10; // уменьшение на последний разряд       
+            } while (numberInt != 0);
+
+            return rezult;
+        }
+
+
+
+
+
+
+
+        //На случай запуска как самостоятельно проекта, не из под Главного Меню
+        class Program
+        {
+            static void Main()
+            {
+                Task task = new();
+                task.Start();
+            }
+        }
+    }
+}
